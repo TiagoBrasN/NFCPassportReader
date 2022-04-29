@@ -139,7 +139,23 @@ public class NFCPassportModel {
     public var passportImage : UIImage? {
         guard let dg2 = dataGroupsRead[.DG2] as? DataGroup2 else { return nil }
         
-        return dg2.getImage()
+        let imageData = Data(dg2.imageData)
+        
+        func findPhoto(offset: Int = 0) -> UIImage? {
+            guard offset < 500 && offset < imageData.count / 2 else {
+                return nil
+            }
+            
+            let data = imageData[imageData.index(imageData.startIndex, offsetBy: offset)..<imageData.endIndex]
+            
+            guard let image = UIImage(data: data) else {
+                return findPhoto(offset: offset + 1)
+            }
+            
+            return image
+        }
+        
+        return findPhoto()
     }
 
     public var signatureImage : UIImage? {
