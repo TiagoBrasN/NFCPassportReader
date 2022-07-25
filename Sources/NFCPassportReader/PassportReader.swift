@@ -38,6 +38,8 @@ public class PassportReader : NSObject {
     private var nfcViewDisplayMessageHandler: ((NFCViewDisplayMessage) -> String?)?
     private var masterListURL : URL?
     private var shouldNotReportNextReaderSessionInvalidationErrorUserCanceled : Bool = false
+    
+    private let feedbackGenerator = UINotificationFeedbackGenerator()
 
     // By default, Passive Authentication uses the new RFS5652 method to verify the SOD, but can be switched to use
     // the previous OpenSSL CMS verification if necessary
@@ -48,6 +50,8 @@ public class PassportReader : NSObject {
         
         Log.logLevel = logLevel
         self.masterListURL = masterListURL
+        
+        feedbackGenerator.prepare()
     }
     
     public func setMasterListURL( _ masterListURL : URL ) {
@@ -146,6 +150,8 @@ extension PassportReader : NFCTagReaderSessionDelegate {
     }
     
     public func tagReaderSession(_ session: NFCTagReaderSession, didDetect tags: [NFCTag]) {
+        feedbackGenerator.notificationOccurred(.success)
+        
         Log.debug( "tagReaderSession:didDetect - \(tags[0])" )
         if tags.count > 1 {
             Log.debug( "tagReaderSession:more than 1 tag detected! - \(tags)" )

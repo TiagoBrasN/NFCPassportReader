@@ -1,6 +1,5 @@
 import XCTest
 import CoreNFC
-import OpenSSL
 
 @testable import NFCPassportReader
 
